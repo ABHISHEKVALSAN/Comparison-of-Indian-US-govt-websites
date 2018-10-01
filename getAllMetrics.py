@@ -11,6 +11,7 @@ import multiprocessing as mp
 import webcolors
 import re
 import string
+import sys
 import unidecode
 
 
@@ -121,8 +122,7 @@ def get_emph_body_text_percentage(d):
 
 def get_text_position_changes(s):
 
-	#print "Param4"
-
+	#print "Param
 	elem=s.findAll()
 	prev=""
 	textPositionChanges=0
@@ -298,8 +298,8 @@ def get_font_count(d):
 
 def setDriverOptions():
 	options 				= Options()
-	options.binary_location = "/usr/bin/chromium-browser"
-	#chrome_driver_binary	= "/home/avk/pyEnv/bin/chromedriver"
+	options.binary_location = "/home/abhiavk/git/mysite/mysiteEnv/bin/chromium-browser"
+	chrome_driver_binary	= "/home/abhiavk/git/mysite/mysiteEnv/bin/chromedriver"
 	options.add_argument("--headless")
 	options.add_argument("--start-maximized");
 	options.add_argument("--window-position=1367,0")
@@ -308,11 +308,10 @@ def setDriverOptions():
 
 def getMetrics(url):
 	st 				= time.datetime.now()
-	textFilename	= "CorruptIndianUrls.txt"
-	csvFilename		= "AllIndianGovUrlMetrics.csv"
+	textFilename	= "CorruptUSUrls.txt"
+	csvFilename		= "temp.csv"
 	try:
 		driver			= setDriverOptions()
-
 		driver.implicitly_wait(3)
 		driver.get(url)
 		driver.set_window_size(1024, 768)
@@ -372,12 +371,12 @@ def getMetrics(url):
 		f2			= open(textFilename,"a+")
 		f2.write(url+"\n")
 		f2.close()
-	print time.datetime.now()-st,"\t\t",time.datetime.now()
+	print(time.datetime.now()-st,"\t\t",time.datetime.now())
 	return
 def main(filename):
-	
+
 	fields			= ["url","p1","p2","p3","p4","p5","p6","p7","p8","p9","p10","p11"]
-	csvFilename		= "AllIndianGovUrlMetrics.csv"
+	csvFilename		= "temp.csv"
 	csvFile			= open(csvFilename,"a+")
 	csvWriter		= csv.writer(csvFile)
 	csvWriter.writerow(fields)
@@ -387,15 +386,14 @@ def main(filename):
 	urls 			= manager.list()
 	urlFile			= open(filename,"r")
 	for url in urlFile:
-		urls.append(url[:-1])
-
-	results 		= manager.list()	
-	pool 			= mp.Pool(mp.cpu_count())
+		urls.append(url[:-1].split(",")[-1])
+	results 		= manager.list()
+	pool 			= mp.Pool(mp.cpu_count()-7)
 	results 		= pool.map_async(getMetrics, urls)
 
 	while not results.ready():
 		pass
 	print("Program finished successfully")
 if __name__=="__main__":
-	filename="ctemp.txt"
-	main(filename)
+    filename=sys.argv[-1]
+    main(filename)
