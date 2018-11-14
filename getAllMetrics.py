@@ -13,6 +13,7 @@ import re
 import string
 import sys
 import unidecode
+import traceback
 
 
 def closest_colour(requested_colour):
